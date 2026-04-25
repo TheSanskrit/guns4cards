@@ -24,7 +24,7 @@ botClient.StartReceiving(
 DataBase.Connect();
 
 Console.WriteLine("Бот запущен");
-Console.ReadLine();
+await Task.Delay(-1);
 
 static string EscapeMarkdown(string text)
 {
