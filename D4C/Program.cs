@@ -46,8 +46,6 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     if (update.Message?.Text == null)
         return;
 
-    Console.WriteLine("Получено сообщение, дебаг");
-
     var text = update.Message.Text;
     var normalized = text.Trim().ToLower();
     var chatId = update.Message.Chat.Id;
