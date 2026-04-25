@@ -15,7 +15,7 @@ namespace D4C
     public static class DataBase
     {
         static string dbPath = "MainBase.db";
-        static SqliteConnection connection = new SqliteConnection($"Data Source={dbPath}");
+        static SqliteConnection connection = new SqliteConnection($"Data Source=/d4cdata/{dbPath}");
 
 
         public static void Connect()
