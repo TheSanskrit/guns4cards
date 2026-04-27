@@ -25,11 +25,11 @@ namespace D4C
         public static Rarity RandomCard()
         {
             int val = rnd.Next(1000);
-            if(val <= 535) { return Rarity.Mainstream; }
-            else if(val > 535 && val <= 735) { return Rarity.Normal; }
-            else if(val > 735 && val <= 875) { return Rarity.Rare; }
-            else if (val > 875 && val <= 965) { return Rarity.Special; }
-            else if(val > 965 && val <= 995) { return Rarity.Legendary; }
+            if(val <= 505) { return Rarity.Mainstream; }
+            else if(val <= 695) { return Rarity.Normal; }
+            else if(val <= 870) { return Rarity.Rare; }
+            else if (val <= 965) { return Rarity.Special; }
+            else if(val <= 995) { return Rarity.Legendary; }
             else if(val > 995) { return Rarity.Mythycal; }
             else { return Rarity.Mainstream; }
         }

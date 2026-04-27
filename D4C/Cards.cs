@@ -32,6 +32,28 @@ namespace D4C
         }
     }
 
+    public class Achievement
+    {
+        public string Title { get; }
+
+        public string Description { get; }
+
+        public int ID { get; }
+
+        public int[] requiredCards { get; }
+
+        public int requiredScore { get; }
+
+        public Achievement(string title, string description, int iD, int[] requiredCards, int requiredScore)
+        {
+            Title = title;
+            Description = description;
+            ID = iD;
+            this.requiredCards = requiredCards;
+            this.requiredScore = requiredScore;
+        }
+    }
+
     public class Cards
     {
         public static List<Card> cardsList = new List<Card>
@@ -56,7 +78,7 @@ namespace D4C
             new Card("Наган", Rarity.Normal, "Отдельная история в каждой потёртости", 105),
             new Card("Газовик под .22", Rarity.Mainstream, "Не забудьте надеть на ствол бутылку", 007),
             new Card("АК-74М", Rarity.Normal, "Бессмертная классика!", 106),
-            new Card("Колибри 2.7", Rarity.Mainstream, "Как комарик укусит", 008),
+            new Card("Колибри 2.7мм", Rarity.Mainstream, "Как комарик укусит", 008),
             new Card("МП5-СД", Rarity.Rare, "SASно и опасно", 204),
             new Card("vz. 61 Скорпион", Rarity.Rare, "Товарищ, поедим-те ка в отделение", 205),
             new Card("АК-47 тип 1", Rarity.Special, "Дед дедов", 303),
@@ -98,6 +120,16 @@ namespace D4C
             { "❤️" }
         };
 
+        public static class Achievements
+        {
+            public static List<Achievement> achievements = new List<Achievement>()
+            {
+                new Achievement("Кустарник", "\"Товарищ майор, не обессудьте, я просто энтузиаст!\"\nСоберите карточки: Самопал, Тек-9 Авто, Газовик под .22, Степлер-ган", 001, new int[] { 003, 104, 007, 006 }, 0),
+                new Achievement("Хозяин буллщита", "\"С такими стволами и врагов не надо.\"\nСоберите карточки: Самопал, Zip .22, Колибри 2.7мм, Табельный ПМ", 002, new int[] { 103, 008, 003, 001 }, 0),
+                new Achievement("А как? АК!", "\"С вами уже 79 лет\"\nСоберите карточки: Макет Калаша, АК-74М, АК-47 Тип 1", 003, new int[] { 002, 106, 303 }, 0),
+                new Achievement("Встречный удар", "\"Глобальное нападение\"\nСоберите карточки: Глок 'Ядерная зима', Двойные Беретты, Золотой Дигл, М4А1 Сайрекс, AWP без прицела", 004, new int[] {102, 103, 202, 203, 302}, 0)
+            };
+        }
         public static int[] scoreRewards = new int[] { 100, 250, 500, 1000, 2500, 10000 };
         public static int[] coinsRewards = new int[] { 1, 2, 5, 10, 25, 100 };
     }

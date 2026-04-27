@@ -128,7 +128,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     else if(normalized == "!пушка" || normalized.StartsWith("/gun"))
     {
         int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
-            if (DataBase.Cooldown(userID, uTime, 4 * 3600).Item1)
+            if (DataBase.Cooldown(userID, uTime, 3 * 3600).Item1)
             {
                 Rarity rarity = EntComs.RandomCard();
                 Card card = EntComs.GiveCard(userID, rarity, uTime);
