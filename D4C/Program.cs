@@ -144,7 +144,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
             }
             else
             {
-                DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userID, uTime, 4 * 3600).Item2).DateTime;
+                DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userID, uTime, 3 * 3600).Item2).DateTime;
                 await bot.SendMessage(chatId, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
             }
 
