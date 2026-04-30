@@ -105,7 +105,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
             await bot.EditMessageText(
                 chatId: callbackQuery.Message.Chat.Id,
                 messageId: callbackQuery.Message.MessageId,
-                text: GetGun(callbackQuery.From.Id, rarity, EntComs.GiveCard(userID, rarity, (int)((DateTimeOffset)time).ToUnixTimeSeconds())),
+                text: GetGun(callbackQuery.From.Id, rarity, EntComs.GiveCard(userID, rarity, 100)),
                 parseMode: ParseMode.MarkdownV2,
                 cancellationToken: token
         
