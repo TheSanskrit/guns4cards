@@ -99,7 +99,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                 cancellationToken: token
         
 );
-
+            await bot.AnswerCallbackQuery(callbackQuery.Id);
             return;
         }
     }
