@@ -89,14 +89,6 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         var rarity = (Rarity)rarityValue;
         var callback = update.CallbackQuery;
 
-        await bot.EditMessageReplyMarkup(
-            chatId: callback.Message.Chat.Id,
-            messageId: callback.Message.MessageId,
-            replyMarkup: null
-            );
-
-        Task.Delay(1000).Wait();
-
         await bot.EditMessageText(
             chatId: callback.Message.Chat.Id,
             messageId: callback.Message.MessageId,
@@ -104,8 +96,8 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                 callback.From.Id,
                 rarity,
                 EntComs.GiveCard(callback.From.Id, rarity, 100)
-            )
-            , parseMode: ParseMode.MarkdownV2,
+            ),
+            replyMarkup: null,
             cancellationToken: token
         );
 
