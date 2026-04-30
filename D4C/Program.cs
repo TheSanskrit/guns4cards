@@ -9,6 +9,7 @@ var botClient = new TelegramBotClient("8727863080:AAHTC23z3AREtFpaJ1bgFgCYVC8xrw
 
 using var cts = new CancellationTokenSource();
 
+
 var receiverOptions = new ReceiverOptions
 {
     AllowedUpdates = Array.Empty<UpdateType>()
@@ -36,6 +37,42 @@ static string EscapeMarkdown(string text)
     return text;
 }
 
+static string RollReply(Rarity rarity)
+{
+    switch((int)rarity)
+    {
+        case 0: return EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 2)];
+        case 1: return EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 5)];
+        case 2: return EntComs.rollQuotes[3 + EntComs.rnd.Next(0, 2)];
+        case 3: return EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)];
+        case 4: return EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)];
+        case 5: return EntComs.rollQuotes[9 + EntComs.rnd.Next(0, 2)];
+    }
+
+    return "";
+}
+
+static string GetGun(long userId, Rarity rarity, Card card)
+{
+    string message = "";
+    switch((int)rarity)
+    {
+        case 0: message = $"{EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 1)]}"; break;
+        case 1: message = $"{EntComs.rollQuotes[14 + EntComs.rnd.Next(0, 1)]}"; break;
+        case 2: message = $"{EntComs.rollQuotes[16 + EntComs.rnd.Next(0, 1)]}"; break;
+        case 3: message = $"{EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 1)]}"; break;
+        case 4: message = $"{EntComs.rollQuotes[20 + EntComs.rnd.Next(0, 1)]}"; break;
+        case 5: message = $"{EntComs.rollQuotes[22 + EntComs.rnd.Next(0, 1)]}"; break;
+    }
+    message += $"\n\nВы получили: {card.Title}!!!" +
+               $"\n{card.Description}" +
+               $"\n\nРедкость: {Cards.rarityHearts[(int)card.Rarity]}{card.Rarity}{Cards.rarityHearts[(int)card.Rarity]}" +
+               $"\nКол-во стволов у пользователя: {DataBase.GetCardsAmount(userId)}/{Cards.cardsList.Count()}" +
+               $"\nВы получили: {Cards.scoreRewards[(int)rarity]} очков, {Cards.coinsRewards[(int)rarity]} монет";
+
+    return message;
+}
+
 
 
 
@@ -51,12 +88,27 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     var chatId = update.Message.Chat.Id;
     var userID = update.Message.From.Id;
     var userName = $"{update.Message.From.FirstName} {update.Message.From.LastName}";
+    Rarity rarity = Rarity.Mainstream;
+    Card card = null;
 
     var time = DateTime.Now;
     string timeText = $"{time.Month}.{time.Day} {time.Hour}:{time.Minute}";
 
 
-    if(!DataBase.HasID(userID)) { DataBase.AddUser(userID, userName);  }
+    var openBox = new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData("Открыть", "open_gun"));
+
+    if (update.Type == UpdateType.CallbackQuery)
+    {
+        var callbackQuery = update.CallbackQuery;
+
+        if (callbackQuery.Data == "open_gun")
+        {
+            await bot.SendMessage(chatId, GetGun(userID, rarity, card), parseMode: ParseMode.MarkdownV2); Console.WriteLine($"Обратились к данным пользователя {timeText}");
+        }
+    }
+
+
+    if (!DataBase.HasID(userID)) { DataBase.AddUser(userID, userName);  }
 
     if (normalized == "!я" || normalized.StartsWith("/gunprofile"))
     {
@@ -125,31 +177,48 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
 
 
 
-    else if(normalized == "!пушка" || normalized.StartsWith("/gun"))
+    //else if(normalized == "!пушка" || normalized.StartsWith("/gun"))
+    //{
+    //    int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
+    //        if (DataBase.Cooldown(userID, uTime, 3 * 3600).Item1)
+    //        {
+    //            Rarity rarity = EntComs.RandomCard();
+    //            Card card = EntComs.GiveCard(userID, rarity, uTime);
+
+    //            string message = $"Вы получили\\.\\.\\.\n{Cards.rarityEmojies[(int)card.Rarity]}*{EscapeMarkdown(card.Title)}*{Cards.rarityEmojies[(int)card.Rarity]}\\!\\!\\! \n" +
+    //                             $"\"_{EscapeMarkdown(card.Description)}_\"\n\n\n" +
+    //                             $"Редкость: {Cards.rarityHearts[(int)card.Rarity]}*{EscapeMarkdown(card.Rarity.ToString())}*{Cards.rarityHearts[(int)card.Rarity]}\n" +
+    //                             $"Кол\\-во стволов у пользователя: *{DataBase.GetCardsAmount(userID)}/{Cards.cardsList.Count()}*\n" +
+    //                             $"Вы получили: *{Cards.scoreRewards[(int)rarity]} очков, {Cards.coinsRewards[(int)rarity]} монет*";
+
+    //            await bot.SendMessage(chatId, message, parseMode: ParseMode.MarkdownV2, replyParameters: update.Message.Id);
+    //            Console.WriteLine($"Забрали пушку,  {timeText},     {userName}");
+    //        }
+    //        else
+    //        {
+    //            DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userID, uTime, 3 * 3600).Item2).DateTime;
+    //            await bot.SendMessage(chatId, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
+    //        }
+
+    //}
+    else if (normalized == "!пушка" || normalized.StartsWith("/gun"))
     {
         int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
-            if (DataBase.Cooldown(userID, uTime, 3 * 3600).Item1)
-            {
-                Rarity rarity = EntComs.RandomCard();
-                Card card = EntComs.GiveCard(userID, rarity, uTime);
+        if (DataBase.Cooldown(userID, uTime, 3 * 3600).Item1)
+        {
+            rarity = EntComs.RandomCard();
+            card = EntComs.GiveCard(userID, rarity, uTime);
 
-                string message = $"Вы получили\\.\\.\\.\n{Cards.rarityEmojies[(int)card.Rarity]}*{EscapeMarkdown(card.Title)}*{Cards.rarityEmojies[(int)card.Rarity]}\\!\\!\\! \n" +
-                                 $"\"_{EscapeMarkdown(card.Description)}_\"\n\n\n" +
-                                 $"Редкость: {Cards.rarityHearts[(int)card.Rarity]}*{EscapeMarkdown(card.Rarity.ToString())}*{Cards.rarityHearts[(int)card.Rarity]}\n" +
-                                 $"Кол\\-во стволов у пользователя: *{DataBase.GetCardsAmount(userID)}/{Cards.cardsList.Count()}*\n" +
-                                 $"Вы получили: *{Cards.scoreRewards[(int)rarity]} очков, {Cards.coinsRewards[(int)rarity]} монет*";
-
-                await bot.SendMessage(chatId, message, parseMode: ParseMode.MarkdownV2, replyParameters: update.Message.Id);
-                Console.WriteLine($"Забрали пушку,  {timeText},     {userName}");
-            }
-            else
-            {
-                DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userID, uTime, 3 * 3600).Item2).DateTime;
-                await bot.SendMessage(chatId, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
-            }
+            await bot.SendMessage(chatId, RollReply(rarity), parseMode: ParseMode.MarkdownV2, replyParameters: update.Message.Id, replyMarkup: openBox);
+            Console.WriteLine($"Забрали пушку,  {timeText},     {userName}");
+        }
+        else
+        {
+            DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userID, uTime, 3 * 3600).Item2).DateTime;
+            await bot.SendMessage(chatId, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
+        }
 
     }
-
 
 
 
