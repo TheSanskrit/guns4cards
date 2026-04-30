@@ -85,7 +85,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     string timeText = $"{time.Month}.{time.Day} {time.Hour}:{time.Minute}";
 
 
-    if (update.Type == UpdateType.CallbackQuery)
+    if (update.CallbackQuery != null)
     {
         var callbackQuery = update.CallbackQuery;
 
@@ -98,7 +98,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                 parseMode: ParseMode.MarkdownV2,
                 cancellationToken: token
         
-);
+            );
             await bot.AnswerCallbackQuery(callbackQuery.Id);
             return;
         }
