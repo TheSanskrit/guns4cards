@@ -79,29 +79,27 @@ static string GetGun(long userId, Rarity rarity, Card card)
 async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, CancellationToken token)
 {
 
-    Rarity rarity = Rarity.Mainstream;
-
     var time = DateTime.Now;
     string timeText = $"{time.Month}.{time.Day} {time.Hour}:{time.Minute}";
 
-
-    if (update.CallbackQuery != null)
+    if (update.CallbackQuery != null && update.CallbackQuery.Data.StartsWith("open_gun_"))
     {
-        var callbackQuery = update.CallbackQuery;
+        var rarityValue = int.Parse(update.CallbackQuery.Data.Split('_')[2]);
+        var rarity = (Rarity)rarityValue;
 
-        if (callbackQuery.Data == "open_gun")
-        {
-            await bot.EditMessageText(
-                chatId: callbackQuery.Message.Chat.Id,
-                messageId: callbackQuery.Message.MessageId,
-                text: GetGun(callbackQuery.From.Id, rarity, EntComs.GiveCard(callbackQuery.From.Id, rarity, 100)),
-                parseMode: ParseMode.MarkdownV2,
-                cancellationToken: token
-        
-            );
-            await bot.AnswerCallbackQuery(callbackQuery.Id);
-            return;
-        }
+        await bot.EditMessageText(
+            chatId: update.CallbackQuery.Message.Chat.Id,
+            messageId: update.CallbackQuery.Message.MessageId,
+            text: GetGun(
+                update.CallbackQuery.From.Id,
+                rarity,
+                EntComs.GiveCard(update.CallbackQuery.From.Id, rarity, 100)
+            ),
+            
+            cancellationToken: token
+        );
+
+        await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
     }
 
 
@@ -214,9 +212,14 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
         if (DataBase.Cooldown(userID, uTime, 3 * 3600).Item1)
         {
-            rarity = EntComs.RandomCard();
-            var openBox = new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData("Открыть", "open_gun"));
-            await bot.SendMessage(chatId, RollReply(rarity), parseMode: ParseMode.MarkdownV2, replyParameters: update.Message.Id, replyMarkup: openBox);
+            var rarity = EntComs.RandomCard();
+            var openBox = new InlineKeyboardMarkup(
+                InlineKeyboardButton.WithCallbackData(
+                    "Открыть",
+                    $"open_gun_{(int)rarity}"
+                )
+            );
+            await bot.SendMessage(chatId, RollReply(rarity), replyParameters: update.Message.Id, replyMarkup: openBox);
             Console.WriteLine($"Забрали пушку,  {timeText},     {userName}");
         }
         else
