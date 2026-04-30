@@ -80,16 +80,15 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
 {
 
 
-    if (update.Message?.Text == null)
-        return;
+
 
     var text = update.Message.Text;
     var normalized = text.Trim().ToLower();
     var chatId = update.Message.Chat.Id;
     var userID = update.Message.From.Id;
     var userName = $"{update.Message.From.FirstName} {update.Message.From.LastName}";
+
     Rarity rarity = Rarity.Mainstream;
-    Card card = null;
 
     var time = DateTime.Now;
     string timeText = $"{time.Month}.{time.Day} {time.Hour}:{time.Minute}";
@@ -103,12 +102,23 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
 
         if (callbackQuery.Data == "open_gun")
         {
-            await bot.SendMessage(chatId, GetGun(userID, rarity, card), parseMode: ParseMode.MarkdownV2); Console.WriteLine($"Обратились к данным пользователя {timeText}");
+            await bot.EditMessageText(
+                chatId: callbackQuery.Message.Chat.Id,
+                messageId: callbackQuery.Message.MessageId,
+                text: GetGun(callbackQuery.From.Id, rarity, EntComs.GiveCard(userID, rarity, (int)((DateTimeOffset)time).ToUnixTimeSeconds())),
+                parseMode: ParseMode.MarkdownV2,
+                cancellationToken: token
+        
+);
+
         }
     }
 
 
     if (!DataBase.HasID(userID)) { DataBase.AddUser(userID, userName);  }
+
+    if (update.Message?.Text == null)
+        return;
 
     if (normalized == "!я" || normalized.StartsWith("/gunprofile"))
     {
@@ -207,7 +217,6 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         if (DataBase.Cooldown(userID, uTime, 3 * 3600).Item1)
         {
             rarity = EntComs.RandomCard();
-            card = EntComs.GiveCard(userID, rarity, uTime);
 
             await bot.SendMessage(chatId, RollReply(rarity), parseMode: ParseMode.MarkdownV2, replyParameters: update.Message.Id, replyMarkup: openBox);
             Console.WriteLine($"Забрали пушку,  {timeText},     {userName}");
