@@ -86,16 +86,25 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     {
         var rarityValue = int.Parse(update.CallbackQuery.Data.Split('_')[2]);
         var rarity = (Rarity)rarityValue;
+        var callback = update.CallbackQuery;
+
+        await bot.EditMessageReplyMarkup(
+            chatId: callback.Message.Chat.Id,
+            messageId: callback.Message.MessageId,
+            replyMarkup: null
+            );
+
+        Task.Delay(1000).Wait();
 
         await bot.EditMessageText(
-            chatId: update.CallbackQuery.Message.Chat.Id,
-            messageId: update.CallbackQuery.Message.MessageId,
+            chatId: callback.Message.Chat.Id,
+            messageId: callback.Message.MessageId,
             text: GetGun(
-                update.CallbackQuery.From.Id,
+                callback.From.Id,
                 rarity,
-                EntComs.GiveCard(update.CallbackQuery.From.Id, rarity, 100)
-            ),
-            
+                EntComs.GiveCard(callback.From.Id, rarity, 100)
+            )
+            , parseMode: ParseMode.MarkdownV2,
             cancellationToken: token
         );
 
@@ -219,7 +228,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                     $"open_gun_{(int)rarity}"
                 )
             );
-            await bot.SendMessage(chatId, RollReply(rarity), replyParameters: update.Message.Id, replyMarkup: openBox);
+            await bot.SendMessage(chatId, RollReply(rarity), parseMode: ParseMode.MarkdownV2, replyParameters: update.Message.Id, replyMarkup: openBox);
             Console.WriteLine($"Забрали пушку,  {timeText},     {userName}");
         }
         else
