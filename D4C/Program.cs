@@ -79,22 +79,11 @@ static string GetGun(long userId, Rarity rarity, Card card)
 async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, CancellationToken token)
 {
 
-
-
-
-    var text = update.Message.Text;
-    var normalized = text.Trim().ToLower();
-    var chatId = update.Message.Chat.Id;
-    var userID = update.Message.From.Id;
-    var userName = $"{update.Message.From.FirstName} {update.Message.From.LastName}";
-
     Rarity rarity = Rarity.Mainstream;
 
     var time = DateTime.Now;
     string timeText = $"{time.Month}.{time.Day} {time.Hour}:{time.Minute}";
 
-
-    var openBox = new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData("Открыть", "open_gun"));
 
     if (update.Type == UpdateType.CallbackQuery)
     {
@@ -105,20 +94,29 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
             await bot.EditMessageText(
                 chatId: callbackQuery.Message.Chat.Id,
                 messageId: callbackQuery.Message.MessageId,
-                text: GetGun(callbackQuery.From.Id, rarity, EntComs.GiveCard(userID, rarity, 100)),
+                text: GetGun(callbackQuery.From.Id, rarity, EntComs.GiveCard(callbackQuery.From.Id, rarity, 100)),
                 parseMode: ParseMode.MarkdownV2,
                 cancellationToken: token
         
 );
 
+            return;
         }
     }
 
 
-    if (!DataBase.HasID(userID)) { DataBase.AddUser(userID, userName);  }
+
 
     if (update.Message?.Text == null)
         return;
+
+    var text = update.Message.Text;
+    var normalized = text.Trim().ToLower();
+    var chatId = update.Message.Chat.Id;
+    var userID = update.Message.From.Id;
+    var userName = $"{update.Message.From.FirstName} {update.Message.From.LastName}";
+
+    if (!DataBase.HasID(userID)) { DataBase.AddUser(userID, userName); }
 
     if (normalized == "!я" || normalized.StartsWith("/gunprofile"))
     {
@@ -217,7 +215,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         if (DataBase.Cooldown(userID, uTime, 3 * 3600).Item1)
         {
             rarity = EntComs.RandomCard();
-
+            var openBox = new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData("Открыть", "open_gun"));
             await bot.SendMessage(chatId, RollReply(rarity), parseMode: ParseMode.MarkdownV2, replyParameters: update.Message.Id, replyMarkup: openBox);
             Console.WriteLine($"Забрали пушку,  {timeText},     {userName}");
         }
