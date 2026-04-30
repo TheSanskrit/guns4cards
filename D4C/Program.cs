@@ -97,6 +97,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                 rarity,
                 EntComs.GiveCard(callback.From.Id, rarity, 100)
             ),
+            parseMode: ParseMode.MarkdownV2,
             replyMarkup: null,
             cancellationToken: token
         );
