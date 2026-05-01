@@ -101,8 +101,8 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                 EntComs.GiveCard(callback.From.Id, rarity, 100)
             ),
             parseMode: ParseMode.MarkdownV2,
-            replyMarkup: null,
-            cancellationToken: token
+            replyMarkup: null
+
         );
 
         await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
