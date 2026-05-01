@@ -67,7 +67,7 @@ static string GetGun(long userId, Rarity rarity, Card card)
         case 4: message = $"{EscapeMarkdown(EntComs.rollQuotes[32 + EntComs.rnd.Next(0, 1)])}"; break;
         case 5: message = $"{EscapeMarkdown(EntComs.rollQuotes[34 + EntComs.rnd.Next(0, 1)])}"; break;
     }
-    message = EscapeMarkdown(message);
+
     message += $"\n\nВы получили: {EscapeMarkdown(card.Title)}\\!\\!\\!" +
                $"\n-\"{EscapeMarkdown(card.Description)}\"_" +
                $"\n\nРедкость: *{Cards.rarityHearts[(int)card.Rarity]}{card.Rarity}{Cards.rarityHearts[(int)card.Rarity]}*" +
