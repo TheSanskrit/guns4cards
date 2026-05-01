@@ -39,17 +39,20 @@ static string EscapeMarkdown(string text)
 
 static string RollReply(Rarity rarity)
 {
-    switch((int)rarity)
+    string message = "";
+
+    message = $"";
+    switch ((int)rarity)
     {
-        case 0: return EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 2)];
-        case 1: return EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 5)];
-        case 2: return EntComs.rollQuotes[3 + EntComs.rnd.Next(0, 2)];
-        case 3: return EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)];
-        case 4: return EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)];
-        case 5: return EntComs.rollQuotes[9 + EntComs.rnd.Next(0, 2)];
+        case 0: message += $"*{ EscapeMarkdown(EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 2)])}\n\n_{ EscapeMarkdown(EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 2)])} _ *"; break ;
+        case 1: message += $"*{EscapeMarkdown(EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 5)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 5)])} _ *"; break;
+        case 2: message += $"*{EscapeMarkdown(EntComs.rollQuotes[3 + EntComs.rnd.Next(0, 2)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[15 + EntComs.rnd.Next(0, 2)])} _ *"; break; ;
+        case 3: message += $"*{EscapeMarkdown(EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)])} _ *"; break;;
+        case 4: message += $"*{EscapeMarkdown(EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)])} _ *"; break; ;
+        case 5: message += $"*{EscapeMarkdown(EntComs.rollQuotes[9 + EntComs.rnd.Next(0, 2)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[21 + EntComs.rnd.Next(0, 2)])} _ *"; break; ;
     }
 
-    return "";
+    return message;
 }
 
 static string GetGun(long userId, Rarity rarity, Card card)
@@ -57,12 +60,12 @@ static string GetGun(long userId, Rarity rarity, Card card)
     string message = "";
     switch((int)rarity)
     {
-        case 0: message = $"{EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 1)]}"; break;
-        case 1: message = $"{EntComs.rollQuotes[14 + EntComs.rnd.Next(0, 1)]}"; break;
-        case 2: message = $"{EntComs.rollQuotes[16 + EntComs.rnd.Next(0, 1)]}"; break;
-        case 3: message = $"{EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 1)]}"; break;
-        case 4: message = $"{EntComs.rollQuotes[20 + EntComs.rnd.Next(0, 1)]}"; break;
-        case 5: message = $"{EntComs.rollQuotes[22 + EntComs.rnd.Next(0, 1)]}"; break;
+        case 0: message = $"{EscapeMarkdown(EntComs.rollQuotes[24 + EntComs.rnd.Next(0, 1)])}"; break;
+        case 1: message = $"{EscapeMarkdown(EntComs.rollQuotes[26 + EntComs.rnd.Next(0, 1)])}"; break;
+        case 2: message = $"{EscapeMarkdown(EntComs.rollQuotes[28 + EntComs.rnd.Next(0, 1)])}"; break;
+        case 3: message = $"{EscapeMarkdown(EntComs.rollQuotes[30 + EntComs.rnd.Next(0, 1)])}"; break;
+        case 4: message = $"{EscapeMarkdown(EntComs.rollQuotes[32 + EntComs.rnd.Next(0, 1)])}"; break;
+        case 5: message = $"{EscapeMarkdown(EntComs.rollQuotes[34 + EntComs.rnd.Next(0, 1)])}"; break;
     }
     message = EscapeMarkdown(message);
     message += $"\n\nВы получили: {card.Title}\\!\\!\\!" +
