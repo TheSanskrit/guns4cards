@@ -69,7 +69,7 @@ static string GetGun(long userId, Rarity rarity, Card card)
     }
 
     message += $"\n\nВы получили: {EscapeMarkdown(card.Title)}\\!\\!\\!" +
-               $"\n-\"{EscapeMarkdown(card.Description)}\"_" +
+               $"\n\"{EscapeMarkdown(card.Description)}\"" +
                $"\n\nРедкость: *{Cards.rarityHearts[(int)card.Rarity]}{card.Rarity}{Cards.rarityHearts[(int)card.Rarity]}*" +
                $"\nКол\\-во стволов у пользователя: *{DataBase.GetCardsAmount(userId)}/{Cards.cardsList.Count()}*" +
                $"\nВы получили: *{Cards.scoreRewards[(int)rarity]} очков, {Cards.coinsRewards[(int)rarity]} монет*";
