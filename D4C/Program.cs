@@ -118,7 +118,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
     }
 
-    if(update.CallbackQuery.Data.StartsWith("get_bonus"))
+    else if(update.CallbackQuery.Data.StartsWith("get_bonus"))
     {
         var callback = update.CallbackQuery;
         long userId = callback.From.Id;
