@@ -126,8 +126,6 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         Console.WriteLine("yay1");
         if( subscribed )
         {
-            try
-            {
                 int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
                 var cooldown = DataBase.Cooldown(userId, uTime, 3 * 3600);
                 Console.WriteLine("yay2");
@@ -149,9 +147,6 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                     Console.WriteLine("yay5");
                     await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
                 }
-            }
-            catch (Exception ex) { Console.WriteLine($"Ошибка при выдаче бонусного ствола пользователю {userId}: {ex.Message}"); }
-            await bot.SendMessage(callback.Message.Chat.Id, "Бонус работает");
         }
         else
         {
@@ -174,9 +169,32 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
 
     if (!DataBase.HasID(userID)) { DataBase.AddUser(userID, userName); }
 
-    if (normalized == "!я" || normalized.StartsWith("/gunprofile"))
+
+
+    if(normalized == "/start")
     {
-         string message = $"Пользователь: <i>{EscapeMarkdown(DataBase.GetStats(userID).name)}</i>" +
+        await bot.SendMessage(userID, "Добро пожаловать в мир Guns4Cards!\n\nЭтот бот позволит вам собирать коллекцию из десятков разных карточек с оружием, зарабатывать очки," +
+            " соревноваться за место в топе! А далее в бот будут добавляться новые увлекательные функции, такие как крафт, торговля, лимитированные карточки и прочее!\n" +
+            "Можете ввести /guncommands, чтобы посмотреть список доступных команд бота");
+    }
+
+
+    else if(normalized == "/guncommands")
+    {
+        string message = $"<b>Список команд бота:</b>\n\n" +
+                         $"/gun, !пушка, пушка или ствол - получить случайную карточку с оружием (кулдаун 3 часа)\n" +
+                         $"/gunprofile или !я - посмотреть свою статистику и коллекцию\n" +
+                         $"/scoretop или !очкитоп - топ-10 по очкам\n" +
+                         $"/coinstop или !монетытоп - топ-10 по монетам\n" +
+                         $"/имя [новый ник] - изменить свой никнейм в боте";
+        await bot.SendMessage(chatId, message, parseMode: ParseMode.Html);
+    }
+
+
+
+    else if (normalized == "!я" || normalized.StartsWith("/gunprofile"))
+    {
+         string message = $"Пользователь: <i>{DataBase.GetStats(userID).name}</i>" +
                  $"\n\n\n\nКол-во пушек у пользователя: <b>{DataBase.GetCardsAmount(userID)}/{Cards.cardsList.Count()}</b>" +
                  $"\n\nШирпотреб стволов: {Cards.rarityHearts[0]}<b>{DataBase.GetRarityCards(userID).mainstream}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Mainstream).Count()}</b>{Cards.rarityHearts[0]}" +
                  $"\n\nНормальных стволов: {Cards.rarityHearts[1]}<b>{DataBase.GetRarityCards(userID).normal}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Normal).Count()}</b>{Cards.rarityHearts[1]}" +
@@ -223,7 +241,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         string message = $"<b>Топ-10 толстосумов:</b>\n\n\n";
         for (int i = 0; i < coins.Length; i++)
         {
-            message += $"<b>{i + 1}. {EscapeMarkdown(names[i])}</b> - <i>{coins[i]}</i>\n";
+            message += $"<b>{i + 1}. {names[i]}</b> - <i>{coins[i]}</i>\n";
         }
 
         await bot.SendMessage(chatId, message, parseMode: ParseMode.Html);
@@ -265,7 +283,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     //        }
 
     //}
-    else if (normalized == "!пушка" || normalized.StartsWith("/gun"))
+    else if (normalized == "!пушка" || normalized == "пушка" || normalized == "ствол" || normalized.StartsWith("/gun"))
     {
         int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
         var cooldownResult = DataBase.Cooldown(userID, uTime, 3 * 3600);
