@@ -15,7 +15,7 @@ namespace D4C
 
     public static class DataBase
     {
-        static string dbPath = "MainBase.db";
+        static string dbPath = "MainBase2.db";
         static SqliteConnection connection = new SqliteConnection($"Data Source=/d4cdata/{dbPath}");
 
 
@@ -246,20 +246,13 @@ WHERE Id = @user;";
                 while (reader.Read())
                 {
                     LCT = reader.GetInt32(0);
-                    if (reader.IsDBNull(1))
-                    {
-                        LCTBonus = 0;
-                    }
-                    else
-                    {
-                        LCTBonus = reader.GetInt32(1);
-                    }
+                    LCTBonus = reader.GetInt32(1);
                 }
             }
 
             connection.Close();
 
-            return (unixTime > Convert.ToInt64(LCT) + cooldown, unixTime > Convert.ToInt64(LCTBonus) + (3600 * 8), (Convert.ToInt32(LCT) + cooldown) - unixTime, (Convert.ToInt32(LCTBonus) + (3600 * 8)));
+            return (unixTime > Convert.ToInt64(LCT) + cooldown, unixTime > Convert.ToInt64(LCTBonus) + (3600 * 8), (Convert.ToInt32(LCT) + cooldown) - unixTime, (Convert.ToInt32(LCTBonus) + (3600 * 8)) - unixTime);
         }
     }
 }
