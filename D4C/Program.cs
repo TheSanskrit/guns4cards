@@ -100,7 +100,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         var callback = update.CallbackQuery;
         int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
 
-        var bonusKey = new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData("Получить бонус", "get_bonus"));
+        var bonusKey = new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData("Бонусный ствол", "get_bonus"));
 
         await bot.EditMessageText(
             chatId: callback.Message.Chat.Id,
@@ -127,7 +127,9 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         if( subscribed )
         {
             int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
-            if (DataBase.Cooldown(userId, uTime, 3 * 3600).Item2)
+            var cooldown = DataBase.Cooldown(userId, uTime, 3 * 3600);
+
+            if (cooldown.Item2)
             {
                 Rarity rarity = EntComs.RandomCard();
                 Card card = EntComs.GiveCard(userId, rarity, uTime, true);
@@ -138,8 +140,8 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
             }
             else
             {
-                DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userId, uTime, 3 * 3600).Item4).DateTime;
-                await bot.SendMessage(callback.From.Id, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая бонусная партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
+                DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(cooldown.Item4).DateTime;
+                await bot.SendMessage(callback.Message.Chat.Id, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая бонусная партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
                 await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
             }
         }
@@ -258,7 +260,8 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     else if (normalized == "!пушка" || normalized.StartsWith("/gun"))
     {
         int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
-        if (DataBase.Cooldown(userID, uTime, 3 * 3600).Item1)
+        var cooldownResult = DataBase.Cooldown(userID, uTime, 3 * 3600);
+        if (cooldownResult.Item1)
         {
             var rarity = EntComs.RandomCard();
             var openBox = new InlineKeyboardMarkup(
@@ -272,7 +275,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         }
         else
         {
-            DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userID, uTime, 3 * 3600).Item3).DateTime;
+            DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(cooldownResultS.Item3).DateTime;
             await bot.SendMessage(chatId, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
         }
 
