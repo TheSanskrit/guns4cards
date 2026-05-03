@@ -246,7 +246,14 @@ WHERE Id = @user;";
                 while (reader.Read())
                 {
                     LCT = reader.GetInt32(0);
-                    LCTBonus = reader.GetInt32(1);
+                    if (reader.IsDBNull(1))
+                    {
+                        LCTBonus = 0;
+                    }
+                    else
+                    {
+                        LCTBonus = reader.GetInt32(1);
+                    }
                 }
             }
 
