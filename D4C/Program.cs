@@ -108,7 +108,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
             text: GetGun(
                 callback.From.Id,
                 rarity,
-                EntComs.GiveCard(callback.From.Id, rarity, uTime)
+                EntComs.GiveCard(callback.From.Id, rarity, uTime, false)
             ),
             parseMode: ParseMode.Html,
             replyMarkup: bonusKey
@@ -125,13 +125,26 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         bool subscribed = await IsUserSubscribed(userId, "@deadprogrammist");
 
         if( subscribed )
-        { 
-            await bot.SendMessage(callback.Message.Chat.Id, "Благодарим за подписку!\n\nБонус получен");
+        {
+            int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
+            if (DataBase.Cooldown(userId, uTime, 3 * 3600).Item2)
+            {
+                Rarity rarity = EntComs.RandomCard();
+                Card card = EntComs.GiveCard(userId, rarity, uTime, true);
+
+                await bot.SendMessage(callback.Message.Chat.Id, GetGun(userId, rarity, card), parseMode: ParseMode.Html, replyParameters: update.Message.Id);
+                Console.WriteLine($"Забрали пушку,  {timeText},     {callback.From.FirstName} {callback.From.LastName}");
+            }
+            else
+            {
+                DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userId, uTime, 3 * 3600).Item4).DateTime;
+                await bot.SendMessage(callback.From.Id, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая бонусная партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
+            }
         }
         else
         {
             await bot.SendMessage(callback.Message.Chat.Id, "Ага, вы кажется не подписаны на канал разработчика бота.\n\nПожалуйста, перейдите в профиль бота" +
-                "и подпишитесь на канал по ссылке, а затем вернитесь сюда и нажмите на кнопку снова");
+                " и подпишитесь на канал по ссылке. Это позволит вам получать бонусную карточку каждые 8 часов");
         }
 
         await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
@@ -258,7 +271,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         }
         else
         {
-            DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userID, uTime, 3 * 3600).Item2).DateTime;
+            DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userID, uTime, 3 * 3600).Item3).DateTime;
             await bot.SendMessage(chatId, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
         }
 

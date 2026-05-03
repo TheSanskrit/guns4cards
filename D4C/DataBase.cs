@@ -3,6 +3,7 @@ using Microsoft.VisualBasic;
 using SQLitePCL;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Reflection.Metadata;
 using System.Text;
@@ -23,7 +24,7 @@ namespace D4C
                 connection.Open();
                 Console.WriteLine("База пользователей создана или подключена.");
 
-                string createTableQuery = "CREATE TABLE IF NOT EXISTS Users (Id INTEGER PRIMARY KEY, Nick TEXT, Score INTEGER, Coins INTEGER, LCT INTEGER)";
+                string createTableQuery = "CREATE TABLE IF NOT EXISTS Users (Id INTEGER PRIMARY KEY, Nick TEXT, Score INTEGER, Coins INTEGER, LCT INTEGER, LCTBonus INTEGER)";
                 using (var command = new SqliteCommand(createTableQuery, connection))
                 {
                     command.ExecuteNonQuery();
@@ -45,8 +46,8 @@ namespace D4C
 
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"
-        INSERT OR IGNORE INTO Users (Id, Nick, Score, Coins, LCT) 
-        VALUES ($id, $name, 0, 0, 0);
+        INSERT OR IGNORE INTO Users (Id, Nick, Score, Coins, LCT, LCTBonus) 
+        VALUES ($id, $name, 0, 0, 0, 0);
     ";
 
             cmd.Parameters.AddWithValue("$id", id);
@@ -121,7 +122,7 @@ namespace D4C
     
 
 
-        public static void AddCard(long userID, int cardID, Rarity rarity, int unixTime)
+        public static void AddCard(long userID, int cardID, Rarity rarity, int unixTime, bool isBonus)
         {
             connection.Open();
             var cmd = connection.CreateCommand();
@@ -136,7 +137,9 @@ namespace D4C
 
             cmd.ExecuteNonQuery();
 
-            cmd.CommandText = @"UPDATE Users SET Score = Score + @score, Coins = Coins + @coins, LCT = @time WHERE Id = @id";
+            if (isBonus) { cmd.CommandText = @"UPDATE Users SET Score = Score + @score, Coins = Coins + @coins, LCTBonus = @time WHERE Id = @id"; }
+
+            else { cmd.CommandText = @"UPDATE Users SET Score = Score + @score, Coins = Coins + @coins, LCT = @time WHERE Id = @id"; }
 
             cmd.Parameters.AddWithValue("@score", Cards.scoreRewards[(int)rarity]);
             cmd.Parameters.AddWithValue("@coins", Cards.coinsRewards[(int)rarity]);
@@ -229,18 +232,27 @@ WHERE Id = @user;";
 
 
 
-        public static (bool, int) Cooldown(long userID, int unixTime, int cooldown)
+        public static (bool, bool, int, int) Cooldown(long userID, int unixTime, int cooldown)
         {
             connection.Open();
             var cmd = connection.CreateCommand();
-            cmd.CommandText = @"SELECT LCT FROM Users WHERE Id = @user";
+            cmd.CommandText = @"SELECT LCT, LCTBonus FROM Users WHERE Id = @user";
             cmd.Parameters.AddWithValue("@user", userID);
 
-            var LCT = cmd.ExecuteScalar();
+            int LCT = 0; int LCTBonus = 0;
+
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    LCT = reader.GetInt32(0);
+                    LCTBonus = reader.GetInt32(1);
+                }
+            }
 
             connection.Close();
 
-            return (unixTime > Convert.ToInt64(LCT) + cooldown, (Convert.ToInt32(LCT) + cooldown) - unixTime);
+            return (unixTime > Convert.ToInt64(LCT) + cooldown, unixTime > Convert.ToInt64(LCTBonus) + (3600 * 8), (Convert.ToInt32(LCT) + cooldown) - unixTime, (Convert.ToInt32(LCTBonus) + (3600 * 8)));
         }
     }
 }

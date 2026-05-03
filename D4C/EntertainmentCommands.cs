@@ -76,7 +76,7 @@ namespace D4C
             { "\"Неужели это.... Тот самый!?\"" }
         };
 
-        public static Card GiveCard(long userID, Rarity rarity, int time)
+        public static Card GiveCard(long userID, Rarity rarity, int time, bool isBonus)
         {
             var filtered = Cards.cardsList
                 .Where(c => c.Rarity == rarity)
@@ -85,7 +85,7 @@ namespace D4C
             if (filtered.Count == 0) return null;
 
             var card = filtered[rnd2.Next(filtered.Count)];
-            DataBase.AddCard(userID, card.ID, card.Rarity, time);
+            DataBase.AddCard(userID, card.ID, card.Rarity, time, isBonus);
 
             return card;
         }
