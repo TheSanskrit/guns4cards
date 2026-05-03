@@ -134,20 +134,21 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
 
                 await bot.SendMessage(callback.Message.Chat.Id, GetGun(userId, rarity, card), parseMode: ParseMode.Html, replyParameters: update.Message.Id);
                 Console.WriteLine($"Забрали пушку,  {timeText},     {callback.From.FirstName} {callback.From.LastName}");
+                await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
             }
             else
             {
                 DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(DataBase.Cooldown(userId, uTime, 3 * 3600).Item4).DateTime;
                 await bot.SendMessage(callback.From.Id, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая бонусная партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
+                await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
             }
         }
         else
         {
             await bot.SendMessage(callback.Message.Chat.Id, "Ага, вы кажется не подписаны на канал разработчика бота.\n\nПожалуйста, перейдите в профиль бота" +
                 " и подпишитесь на канал по ссылке. Это позволит вам получать бонусную карточку каждые 8 часов");
+            await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
         }
-
-        await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
     }
 
 
@@ -198,7 +199,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         string message = $"<b>Топ-10 стрелков:</b>\n\n\n";
         for (int i = 0; i < scores.Length; i++)
         {
-            message += $"<b>{i + 1}. {EscapeMarkdown(names[i])}</b> - <i>{scores[i]}</i>\n";
+            message += $"<b>{i + 1}. {names[i]}</b> - <i>{scores[i]}</i>\n";
         }
 
         await bot.SendMessage(chatId, message, parseMode: ParseMode.Html);
