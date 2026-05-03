@@ -179,7 +179,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     }
 
 
-    else if(normalized == "/guncommands")
+    else if(normalized.StartsWith("/guncommands"))
     {
         string message = $"<b>Список команд бота:</b>\n\n" +
                          $"/gun, !пушка, пушка или ствол - получить случайную карточку с оружием (кулдаун 3 часа)\n" +
