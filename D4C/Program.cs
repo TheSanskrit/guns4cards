@@ -44,12 +44,12 @@ static string RollReply(Rarity rarity)
     message = $"";
     switch ((int)rarity)
     {
-        case 0: message += $"<b><i>{EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 2)]}</b>"; break ;
-        case 1: message += $"<b><i>{EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 5)]}</b></i>\n\n<b>{EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 5)]}</b>"; break;
-        case 2: message += $"<b><i>{EntComs.rollQuotes[3 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[15 + EntComs.rnd.Next(0, 2)]}</b>"; break; ;
-        case 3: message += $"<b><i>{EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)]}</b>"; break;;
-        case 4: message += $"<b><i>{EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)]}</b>"; break; ;
-        case 5: message += $"<b><i>{EntComs.rollQuotes[9 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[21 + EntComs.rnd.Next(0, 2)]}</b>"; break; ;
+        case 0: message += $"<b><i>{EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 2)]}</i></b>\n\n<b>{EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 2)]}</b>"; break ;
+        case 1: message += $"<b><i>{EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 5)]}</i></b>\n\n<b>{EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 5)]}</b>"; break;
+        case 2: message += $"<b><i>{EntComs.rollQuotes[3 + EntComs.rnd.Next(0, 2)]}</i></b>\n\n<b>{EntComs.rollQuotes[15 + EntComs.rnd.Next(0, 2)]}</b>"; break; ;
+        case 3: message += $"<b><i>{EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)]}</i></b>\n\n<b>{EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)]}</b>"; break;;
+        case 4: message += $"<b><i>{EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)]}</i></b>\n\n<b>{EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)]}</b>"; break; ;
+        case 5: message += $"<b><i>{EntComs.rollQuotes[9 + EntComs.rnd.Next(0, 2)]}</i></b>\n\n<b>{EntComs.rollQuotes[21 + EntComs.rnd.Next(0, 2)]}</b>"; break; ;
     }
 
     return message;
