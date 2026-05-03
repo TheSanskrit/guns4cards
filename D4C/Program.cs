@@ -44,12 +44,12 @@ static string RollReply(Rarity rarity)
     message = $"";
     switch ((int)rarity)
     {
-        case 0: message += $"*{ EscapeMarkdown(EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 2)])}\n\n_{ EscapeMarkdown(EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 2)])} _ *"; break ;
-        case 1: message += $"*{EscapeMarkdown(EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 5)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 5)])} _ *"; break;
-        case 2: message += $"*{EscapeMarkdown(EntComs.rollQuotes[3 + EntComs.rnd.Next(0, 2)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[15 + EntComs.rnd.Next(0, 2)])} _ *"; break; ;
-        case 3: message += $"*{EscapeMarkdown(EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)])} _ *"; break;;
-        case 4: message += $"*{EscapeMarkdown(EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)])} _ *"; break; ;
-        case 5: message += $"*{EscapeMarkdown(EntComs.rollQuotes[9 + EntComs.rnd.Next(0, 2)])}\n\n_{EscapeMarkdown(EntComs.rollQuotes[21 + EntComs.rnd.Next(0, 2)])} _ *"; break; ;
+        case 0: message += $"<b><i>{EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 2)]}</b>"; break ;
+        case 1: message += $"<b><i>{EntComs.rollQuotes[0 + EntComs.rnd.Next(0, 5)]}</b></i>\n\n<b>{EntComs.rollQuotes[12 + EntComs.rnd.Next(0, 5)]}</b>"; break;
+        case 2: message += $"<b><i>{EntComs.rollQuotes[3 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[15 + EntComs.rnd.Next(0, 2)]}</b>"; break; ;
+        case 3: message += $"<b><i>{EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)]}</b>"; break;;
+        case 4: message += $"<b><i>{EntComs.rollQuotes[6 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[18 + EntComs.rnd.Next(0, 2)]}</b>"; break; ;
+        case 5: message += $"<b><i>{EntComs.rollQuotes[9 + EntComs.rnd.Next(0, 2)]}</b></i>\n\n<b>{EntComs.rollQuotes[21 + EntComs.rnd.Next(0, 2)]}</b>"; break; ;
     }
 
     return message;
@@ -69,10 +69,10 @@ static string GetGun(long userId, Rarity rarity, Card card)
     }
 
     message += $"\n\nВы получили: <b>{EscapeMarkdown(card.Title)}</b>!!!" +
-               $"\n\"<i>{EscapeMarkdown(card.Description)}</i>\"" +
-               $"\n\nРедкость: *{Cards.rarityHearts[(int)card.Rarity]}{card.Rarity}{Cards.rarityHearts[(int)card.Rarity]}*" +
-               $"\nКол\\-во стволов у пользователя: *{DataBase.GetCardsAmount(userId)}/{Cards.cardsList.Count()}*" +
-               $"\nВы получили: *{Cards.scoreRewards[(int)rarity]} очков, {Cards.coinsRewards[(int)rarity]} монет*";
+               $"\n\"<i>{card.Description}</i>\"" +
+               $"\n\n<i>Редкость</i>: <b>{Cards.rarityHearts[(int)card.Rarity]}{card.Rarity}{Cards.rarityHearts[(int)card.Rarity]}</b>" +
+               $"\n<i>Кол-во стволов у пользователя</i>: <b>{DataBase.GetCardsAmount(userId)}/{Cards.cardsList.Count()}</b>" +
+               $"\n<i>Вы получили</i>: <b>{Cards.scoreRewards[(int)rarity]} очков, {Cards.coinsRewards[(int)rarity]} монет</b>";
 
     return message;
 }
@@ -124,17 +124,17 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
 
     if (normalized == "!я" || normalized.StartsWith("/gunprofile"))
     {
-         string message = $"Пользователь: _{EscapeMarkdown(DataBase.GetStats(userID).name)}_" +
-                 $"\n\n\n\nКол\\-во пушек у пользователя: *{DataBase.GetCardsAmount(userID)}/{Cards.cardsList.Count()}*" +
-                 $"\n\nШирпотреб стволов: {Cards.rarityHearts[0]}*{DataBase.GetRarityCards(userID).mainstream}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Mainstream).Count()}*{Cards.rarityHearts[0]}" +
-                 $"\n\nНормальных стволов: {Cards.rarityHearts[1]}*{DataBase.GetRarityCards(userID).normal}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Normal).Count()}*{Cards.rarityHearts[1]}" +
-                 $"\n\nРедких стволов: {Cards.rarityHearts[2]}*{DataBase.GetRarityCards(userID).rare}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Rare).Count()}{Cards.rarityHearts[2]}*" +
-                 $"\n\nОсобенных стволов: {Cards.rarityHearts[3]}*{DataBase.GetRarityCards(userID).special}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Special).Count()}*{Cards.rarityHearts[3]}" +
-                 $"\n\nЛегендарных стволов: {Cards.rarityHearts[4]}*{DataBase.GetRarityCards(userID).leg}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Legendary).Count()}*{Cards.rarityHearts[4]}" +
-                 $"\n\nМифических стволов: {Cards.rarityHearts[5]}*{DataBase.GetRarityCards(userID).myth}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Mythycal).Count()}*{Cards.rarityHearts[5]}" +
-                 $"\n\nСчёт: _{DataBase.GetStats(userID).score}_" +
-                 $"\nМонеты: _{DataBase.GetStats(userID).coins}_";
-        await bot.SendMessage(chatId, message, parseMode: ParseMode.MarkdownV2); Console.WriteLine($"Обратились к данным пользователя {timeText}");
+         string message = $"Пользователь: <i>{EscapeMarkdown(DataBase.GetStats(userID).name)}</i>" +
+                 $"\n\n\n\nКол-во пушек у пользователя: <b>{DataBase.GetCardsAmount(userID)}/{Cards.cardsList.Count()}</b>" +
+                 $"\n\nШирпотреб стволов: {Cards.rarityHearts[0]}<b>{DataBase.GetRarityCards(userID).mainstream}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Mainstream).Count()}</b>{Cards.rarityHearts[0]}" +
+                 $"\n\nНормальных стволов: {Cards.rarityHearts[1]}<b>{DataBase.GetRarityCards(userID).normal}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Normal).Count()}</b>{Cards.rarityHearts[1]}" +
+                 $"\n\nРедких стволов: {Cards.rarityHearts[2]}<b>{DataBase.GetRarityCards(userID).rare}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Rare).Count()}{Cards.rarityHearts[2]}</b>" +
+                 $"\n\nОсобенных стволов: {Cards.rarityHearts[3]}<b>{DataBase.GetRarityCards(userID).special}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Special).Count()}</b>{Cards.rarityHearts[3]}" +
+                 $"\n\nЛегендарных стволов: {Cards.rarityHearts[4]}<b>{DataBase.GetRarityCards(userID).leg}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Legendary).Count()}</b>{Cards.rarityHearts[4]}" +
+                 $"\n\nМифических стволов: {Cards.rarityHearts[5]}<b>{DataBase.GetRarityCards(userID).myth}/{Cards.cardsList.Where(c => c.Rarity == Rarity.Mythycal).Count()}</b>{Cards.rarityHearts[5]}" +
+                 $"\n\nСчёт: <i>{DataBase.GetStats(userID).score}</i>" +
+                 $"\nМонеты: <i>{DataBase.GetStats(userID).coins}</i>";
+        await bot.SendMessage(chatId, message, parseMode: ParseMode.Html); Console.WriteLine($"Обратились к данным пользователя {timeText}");
     }
 
 
@@ -154,13 +154,13 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     {
         int[] scores = DataBase.Top().score; string[] names = DataBase.Top().nick;
 
-        string message = $"*Топ\\-10 стрелков:*\n\n\n";
+        string message = $"<b>Топ-10 стрелков:</b>\n\n\n";
         for (int i = 0; i < scores.Length; i++)
         {
-            message += $"*{i + 1}\\. {EscapeMarkdown(names[i])}* \\- _{scores[i]}_\n";
+            message += $"<b>{i + 1}. {EscapeMarkdown(names[i])}</b> - <i>{scores[i]}</i>\n";
         }
 
-        await bot.SendMessage(chatId, message, parseMode: ParseMode.MarkdownV2);
+        await bot.SendMessage(chatId, message, parseMode: ParseMode.Html);
     }
 
 
@@ -168,13 +168,13 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     {
         int[] coins = DataBase.Top().coins; string[] names = DataBase.Top().nick;
 
-        string message = $"*Топ\\-10 толстосумов:*\n\n\n";
+        string message = $"<b>Топ-10 толстосумов:</b>\n\n\n";
         for (int i = 0; i < coins.Length; i++)
         {
-            message += $"*{i + 1}\\. {EscapeMarkdown(names[i])}* \\- _{coins[i]}_\n";
+            message += $"<b>{i + 1}. {EscapeMarkdown(names[i])}</b> - <i>{coins[i]}</i>\n";
         }
 
-        await bot.SendMessage(chatId, message, parseMode: ParseMode.MarkdownV2);
+        await bot.SendMessage(chatId, message, parseMode: ParseMode.Html);
     }
 
 
@@ -225,7 +225,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                     $"open_gun_{(int)rarity}"
                 )
             );
-            await bot.SendMessage(chatId, RollReply(rarity), parseMode: ParseMode.MarkdownV2, replyParameters: update.Message.Id, replyMarkup: openBox);
+            await bot.SendMessage(chatId, RollReply(rarity), parseMode: ParseMode.Html, replyParameters: update.Message.Id, replyMarkup: openBox);
             Console.WriteLine($"Забрали пушку,  {timeText},     {userName}");
         }
         else
