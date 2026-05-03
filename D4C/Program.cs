@@ -68,7 +68,7 @@ static string GetGun(long userId, Rarity rarity, Card card)
         case 5: message = $"<i> {EntComs.rollQuotes[34 + EntComs.rnd.Next(0, 1)]}</i>"; break;
     }
 
-    message += $"\n\nВы получили: <b>{EscapeMarkdown(card.Title)}</b>!!!" +
+    message += $"\n\nВы получили: <b>{card.Title}</b>!!!" +
                $"\n\"<i>{card.Description}</i>\"" +
                $"\n\n<i>Редкость</i>: <b>{Cards.rarityHearts[(int)card.Rarity]}{card.Rarity}{Cards.rarityHearts[(int)card.Rarity]}</b>" +
                $"\n<i>Кол-во стволов у пользователя</i>: <b>{DataBase.GetCardsAmount(userId)}/{Cards.cardsList.Count()}</b>" +
@@ -76,6 +76,13 @@ static string GetGun(long userId, Rarity rarity, Card card)
 
     return message;
 }
+
+
+
+
+
+
+
 
 
 
@@ -91,6 +98,9 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         var rarityValue = int.Parse(update.CallbackQuery.Data.Split('_')[2]);
         var rarity = (Rarity)rarityValue;
         var callback = update.CallbackQuery;
+        int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
+
+        var bonusKey = new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData("Получить бонус", $"get_bonus"));
 
         await bot.EditMessageText(
             chatId: callback.Message.Chat.Id,
@@ -98,16 +108,34 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
             text: GetGun(
                 callback.From.Id,
                 rarity,
-                EntComs.GiveCard(callback.From.Id, rarity, 100)
+                EntComs.GiveCard(callback.From.Id, rarity, uTime)
             ),
             parseMode: ParseMode.Html,
-            replyMarkup: null
+            replyMarkup: bonusKey
 
         );
 
         await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
     }
 
+    if(update.CallbackQuery.Data.StartsWith("get_bonus"))
+    {
+        var callback = update.CallbackQuery;
+        long userId = callback.From.Id;
+        bool subscribed = await IsUserSubscribed(userId, "@deadprogrammist");
+
+        if( subscribed )
+        { 
+            await bot.SendMessage(callback.Message.Chat.Id, "Благодарим за подписку!\n\nБонус получен");
+        }
+        else
+        {
+            await bot.SendMessage(callback.Message.Chat.Id, "Ага, вы кажется не подписаны на канал разработчика бота.\n\nПожалуйста, перейдите в профиль бота" +
+                "и подпишитесь на канал по ссылке, а затем вернитесь сюда и нажмите на кнопку снова");
+        }
+
+        await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
+    }
 
 
 
@@ -258,4 +286,27 @@ Task HandleErrorAsync(ITelegramBotClient bot, Exception exception, CancellationT
 {
     Console.WriteLine(exception.ToString());
     return Task.CompletedTask;
+}
+
+
+
+
+async Task<bool> IsUserSubscribed(long userId, string channelId)
+{
+    try
+    {
+        ChatMember member = await botClient.GetChatMember(channelId, userId);
+
+        return member.Status switch
+        {
+            ChatMemberStatus.Creator => true,
+            ChatMemberStatus.Administrator => true,
+            ChatMemberStatus.Member => true,
+            _ => false
+        };
+    }
+    catch (Exception)
+    {
+        return false;
+    }
 }
