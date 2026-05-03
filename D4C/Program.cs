@@ -126,24 +126,28 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
 
         if( subscribed )
         {
-            int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
-            var cooldown = DataBase.Cooldown(userId, uTime, 3 * 3600);
-
-            if (cooldown.Item2)
+            try
             {
-                Rarity rarity = EntComs.RandomCard();
-                Card card = EntComs.GiveCard(userId, rarity, uTime, true);
+                int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
+                var cooldown = DataBase.Cooldown(userId, uTime, 3 * 3600);
 
-                await bot.SendMessage(callback.Message.Chat.Id, GetGun(userId, rarity, card), parseMode: ParseMode.Html);
-                Console.WriteLine($"Забрали пушку,  {timeText},     {callback.From.FirstName} {callback.From.LastName}");
-                await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
+                if (cooldown.Item2)
+                {
+                    Rarity rarity = EntComs.RandomCard();
+                    Card card = EntComs.GiveCard(userId, rarity, uTime, true);
+
+                    await bot.SendMessage(callback.Message.Chat.Id, GetGun(userId, rarity, card), parseMode: ParseMode.Html);
+                    Console.WriteLine($"Забрали пушку,  {timeText},     {callback.From.FirstName} {callback.From.LastName}");
+                    await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
+                }
+                else
+                {
+                    DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(cooldown.Item4).DateTime;
+                    await bot.SendMessage(callback.Message.Chat.Id, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая бонусная партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
+                    await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
+                }
             }
-            else
-            {
-                DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(cooldown.Item4).DateTime;
-                await bot.SendMessage(callback.Message.Chat.Id, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая бонусная партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
-                await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
-            }
+            catch (Exception ex) { Console.WriteLine($"Ошибка при выдаче бонусного ствола пользователю {userId}: {ex.Message}"); }
         }
         else
         {
