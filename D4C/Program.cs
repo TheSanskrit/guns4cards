@@ -100,7 +100,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         var callback = update.CallbackQuery;
         int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
 
-        var bonusKey = new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData("Получить бонус", $"get_bonus"));
+        var bonusKey = new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData("Получить бонус", "get_bonus"));
 
         await bot.EditMessageText(
             chatId: callback.Message.Chat.Id,
@@ -132,7 +132,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                 Rarity rarity = EntComs.RandomCard();
                 Card card = EntComs.GiveCard(userId, rarity, uTime, true);
 
-                await bot.SendMessage(callback.Message.Chat.Id, GetGun(userId, rarity, card), parseMode: ParseMode.Html, replyParameters: update.Message.Id);
+                await bot.SendMessage(callback.Message.Chat.Id, GetGun(userId, rarity, card), parseMode: ParseMode.Html);
                 Console.WriteLine($"Забрали пушку,  {timeText},     {callback.From.FirstName} {callback.From.LastName}");
                 await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
             }
