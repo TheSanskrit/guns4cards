@@ -60,16 +60,16 @@ static string GetGun(long userId, Rarity rarity, Card card)
     string message = "";
     switch((int)rarity)
     {
-        case 0: message = $"{EscapeMarkdown(EntComs.rollQuotes[24 + EntComs.rnd.Next(0, 1)])}"; break;
-        case 1: message = $"{EscapeMarkdown(EntComs.rollQuotes[26 + EntComs.rnd.Next(0, 1)])}"; break;
-        case 2: message = $"{EscapeMarkdown(EntComs.rollQuotes[28 + EntComs.rnd.Next(0, 1)])}"; break;
-        case 3: message = $"{EscapeMarkdown(EntComs.rollQuotes[30 + EntComs.rnd.Next(0, 1)])}"; break;
-        case 4: message = $"{EscapeMarkdown(EntComs.rollQuotes[32 + EntComs.rnd.Next(0, 1)])}"; break;
-        case 5: message = $"{EscapeMarkdown(EntComs.rollQuotes[34 + EntComs.rnd.Next(0, 1)])}"; break;
+        case 0: message = $"<i>{EntComs.rollQuotes[24 + EntComs.rnd.Next(0, 1)]}</i>"; break;
+        case 1: message = $"<i>{EntComs.rollQuotes[26 + EntComs.rnd.Next(0, 1)]}</i>"; break;
+        case 2: message = $"<i>{EntComs.rollQuotes[28 + EntComs.rnd.Next(0, 1)]}</i>"; break;
+        case 3: message = $"<i> {EntComs.rollQuotes[30 + EntComs.rnd.Next(0, 1)]}</i>"; break;
+        case 4: message = $"<i> {EntComs.rollQuotes[32 + EntComs.rnd.Next(0, 1)]}</i>"; break;
+        case 5: message = $"<i> {EntComs.rollQuotes[34 + EntComs.rnd.Next(0, 1)]}</i>"; break;
     }
 
-    message += $"\n\nВы получили: {EscapeMarkdown(card.Title)}\\!\\!\\!" +
-               $"\n\"{EscapeMarkdown(card.Description)}\"" +
+    message += $"\n\nВы получили: <b>{EscapeMarkdown(card.Title)}</b>!!!" +
+               $"\n\"<i>{EscapeMarkdown(card.Description)}</i>\"" +
                $"\n\nРедкость: *{Cards.rarityHearts[(int)card.Rarity]}{card.Rarity}{Cards.rarityHearts[(int)card.Rarity]}*" +
                $"\nКол\\-во стволов у пользователя: *{DataBase.GetCardsAmount(userId)}/{Cards.cardsList.Count()}*" +
                $"\nВы получили: *{Cards.scoreRewards[(int)rarity]} очков, {Cards.coinsRewards[(int)rarity]} монет*";
@@ -100,7 +100,7 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
                 rarity,
                 EntComs.GiveCard(callback.From.Id, rarity, 100)
             ),
-            parseMode: ParseMode.MarkdownV2,
+            parseMode: ParseMode.Html,
             replyMarkup: null
 
         );

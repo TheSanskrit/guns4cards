@@ -70,7 +70,7 @@ namespace D4C
             new Card("М4А1 Сайрекс", Rarity.Rare, "Добавляет очки стиля и точности", 203),
             new Card("Золотой Люгер", Rarity.Special, "Говорят, с него стрелял сам кайзер!", 301),
             new Card("AWP без прицела", Rarity.Special, "Лучше стрелять в прыжке", 302),
-            new Card("Smith & Meth-son", Rarity.Legendary, "Это..... Пистолет?", 401),
+            new Card("Smith and Meth-son", Rarity.Legendary, "Это..... Пистолет?", 401),
             new Card("Кольт Патерсон", Rarity.Mythycal, "Самый редкий револьвер в мире!!!", 501),
             new Card("Водяной пистолет", Rarity.Mainstream, "В него можно залить не только воду...)", 005),
             new Card("Степлер-ган", Rarity.Mainstream, "В Англии забанят", 006),
