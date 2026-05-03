@@ -123,27 +123,30 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
         var callback = update.CallbackQuery;
         long userId = callback.From.Id;
         bool subscribed = await IsUserSubscribed(userId, "@deadprogrammist");
-
+        Console.WriteLine("yay1");
         if( subscribed )
         {
             try
             {
                 int uTime = (int)((DateTimeOffset)time).ToUnixTimeSeconds();
                 var cooldown = DataBase.Cooldown(userId, uTime, 3 * 3600);
+                Console.WriteLine("yay2");
 
                 if (cooldown.Item2)
                 {
                     Rarity rarity = EntComs.RandomCard();
                     Card card = EntComs.GiveCard(userId, rarity, uTime, true);
-
+                    Console.WriteLine("yay3");
                     await bot.SendMessage(callback.Message.Chat.Id, GetGun(userId, rarity, card), parseMode: ParseMode.Html);
                     Console.WriteLine($"Забрали пушку,  {timeText},     {callback.From.FirstName} {callback.From.LastName}");
                     await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
                 }
                 else
                 {
+                    Console.WriteLine("yay4");
                     DateTime remTime = DateTimeOffset.FromUnixTimeSeconds(cooldown.Item4).DateTime;
                     await bot.SendMessage(callback.Message.Chat.Id, $"\U0001fae4Пока товар не подвезли\U0001fae4\n\nСледующая бонусная партия через: {remTime.ToString("HH:mm:ss")}", replyParameters: update.Message.Id);
+                    Console.WriteLine("yay5");
                     await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
                 }
             }
