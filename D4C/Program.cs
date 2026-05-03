@@ -122,7 +122,8 @@ async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, Cancellation
     {
         var callback = update.CallbackQuery;
         long userId = callback.From.Id;
-        bool subscribed = await IsUserSubscribed(userId, "@deadprogrammist");
+        //bool subscribed = await IsUserSubscribed(userId, "@deadprogrammist");
+        bool subscribed = true; // для тестов, убрать потом
         Console.WriteLine("yay1");
         if( subscribed )
         {
