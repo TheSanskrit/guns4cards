@@ -83,7 +83,19 @@ namespace D4C
             new Card("vz. 61 Скорпион", Rarity.Rare, "Товарищ, поедим-те ка в отделение", 205),
             new Card("АК-47 тип 1", Rarity.Special, "Дед дедов", 303),
             new Card("FN 2000", Rarity.Special, "Автомат из будущего", 304),
-            new Card("Реквием", Rarity.Legendary, "С такого можно и кита завалить", 402)
+            new Card("Реквием", Rarity.Legendary, "С такого можно и кита завалить", 402),
+            new Card("Пулемет Максим",  Rarity.Rare, "Он должен был остановить все войны...", 206),
+            new Card("МП-44", Rarity.Rare, "Стальная коробка с пулями.", 207),
+            new Card("Обрез Мосинки", Rarity.Mainstream, "Отдача будь здоров", 009),
+            new Card("АШ-12", Rarity.Special, "Автомат под .50 калибр? Почему нет!", 305),
+            new Card("Двойной обрез", Rarity.Normal, "Всё в направлении вашего прицеливания будет уничтожено", 107),
+            new Card("ПП-19 Бизон", Rarity.Normal, "Больше пулемёт, чем пистолет", 108),
+            new Card("American 180", Rarity.Rare, "Рой маленьких злых пулек!", 208),
+            new Card("Нож-пистолет", Rarity.Mainstream, "Кто-то не определился с потребностями", 010),
+            new Card("Меч-пистолет", Rarity.Rare, "Самурайское оружие!", 209),
+            new Card("Намбу Тип-94", Rarity.Mainstream, "Пистолет для сдачи в плен", 011),
+            new Card("Пистолет Либерейтор", Rarity.Mainstream, "Ну, для партизан сойдёт", 012),
+            new Card("Пулемёт Шоша", Rarity.Mainstream, "Худший в мире пулемёт", 013)
         };
 
         //public static Dictionary<string, string> rarityEmojies = new Dictionary<string, string>
